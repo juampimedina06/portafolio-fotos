@@ -34,3 +34,8 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 4. **Tipografía y Micro-interacciones**:
    - Jerarquía tipográfica pulida: etiquetas en mayúsculas de tamaño micro (`text-[11px] font-medium uppercase tracking-wider text-zinc-400`), números de métricas limpios y directos, y botones con transiciones suaves.
+
+# Control de Versiones y Workflow
+
+- **Commits automáticos**: Tras cada cambio o conjunto de modificaciones resueltas, realizar `git add .` y `git commit -m "<descripción de lo realizado>"` siguiendo conventional commits.
+
