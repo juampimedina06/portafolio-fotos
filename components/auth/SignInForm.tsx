@@ -30,7 +30,7 @@ export function SignInForm() {
         return
       }
 
-      toast.success('Bienvenido Administrador')
+      toast.success('¡Bienvenido tomii!')
       router.push('/admin')
       router.refresh()
     } catch {

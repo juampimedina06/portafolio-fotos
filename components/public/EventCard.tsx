@@ -1,15 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import {
-  Calendar,
-  Check,
-  ExternalLink,
-  ImageIcon,
-  MapPin,
-  Share2,
-  Sparkles,
-} from 'lucide-react'
+import { ExternalLink, Share2, Check } from 'lucide-react'
 import type { EventItem } from '@/types/database'
 import { formatEventDate, normalizeExternalUrl } from '@/utils/formatters'
 
@@ -28,7 +20,7 @@ export function EventCard({ event, onEventClick }: EventCardProps) {
 
     const shareData = {
       title: event.title,
-      text: event.description || `Entradas para ${event.title}`,
+      text: event.description || `Galería de fotos de ${event.title}`,
       url: normalizedUrl,
     }
 
@@ -45,7 +37,7 @@ export function EventCard({ event, onEventClick }: EventCardProps) {
       try {
         await navigator.clipboard.writeText(normalizedUrl)
         setCopied(true)
-        setTimeout(() => setCopied(false), 2200)
+        setTimeout(() => setCopied(false), 2000)
       } catch (clipboardErr) {
         console.error('Error copying to clipboard:', clipboardErr)
       }
@@ -53,112 +45,74 @@ export function EventCard({ event, onEventClick }: EventCardProps) {
   }
 
   return (
-    <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-900/60 shadow-lg backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-zinc-700 hover:shadow-2xl hover:shadow-zinc-950/80">
-      {/* Flyer Image Container */}
-      <div className="relative aspect-4/5 w-full overflow-hidden bg-zinc-950">
+    <article
+      onClick={() => onEventClick(event)}
+      className="group relative flex items-center justify-between gap-3 sm:gap-4 rounded-full border border-zinc-200/90 bg-white/95 p-2 sm:p-2.5 pr-4 sm:pr-5 shadow-sm backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-sky-300 hover:shadow-md cursor-pointer active:scale-[0.99]"
+    >
+      {/* Flyer Thumbnail en Círculo */}
+      <div className="relative size-12 sm:size-14 shrink-0 overflow-hidden rounded-full border border-zinc-100 bg-zinc-100 shadow-xs">
         {event.image_url ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={event.image_url}
             alt={event.title}
-            loading="lazy"
-            className="size-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+            className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
-          <div className="flex size-full flex-col items-center justify-center bg-radial from-zinc-800 to-zinc-950 text-zinc-600">
-            <ImageIcon className="size-12 stroke-1 text-zinc-700" />
-            <span className="mt-2 text-xs font-medium uppercase tracking-wider text-zinc-600">
-              Flyer no disponible
-            </span>
+          <div className="flex size-full items-center justify-center text-[10px] text-zinc-400">
+            Foto
           </div>
         )}
+      </div>
 
-        {/* Gradient Overlay for Top Badges */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-zinc-950/80 via-zinc-950/40 to-transparent" />
-
-        {/* Floating Badges */}
-        <div className="absolute inset-x-3 top-3 flex items-center justify-between gap-2 pointer-events-none">
-          {event.is_featured ? (
-            <span className="pointer-events-auto inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/20 px-2.5 py-1 text-xs font-semibold text-amber-300 shadow-md backdrop-blur-md">
-              <Sparkles className="size-3 text-amber-400" />
-              <span>Destacado</span>
+      {/* Información del Evento */}
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-2">
+          <h3 className="truncate font-semibold text-sm sm:text-base text-zinc-900 group-hover:text-sky-600 transition-colors">
+            {event.title}
+          </h3>
+          {event.is_featured && (
+            <span className="shrink-0 rounded-full bg-amber-50 border border-amber-200 px-1.5 py-0.5 text-[9px] font-semibold text-amber-700">
+              Destacado
             </span>
-          ) : (
-            <div />
           )}
+        </div>
 
+        <div className="flex items-center gap-2 text-[11px] sm:text-xs text-zinc-500 mt-0.5 truncate">
+          <span className="font-medium text-zinc-700">{formattedDate}</span>
+          {event.location && (
+            <>
+              <span className="text-zinc-300">•</span>
+              <span className="truncate">{event.location}</span>
+            </>
+          )}
           {event.category && (
-            <span className="pointer-events-auto inline-flex rounded-full border border-zinc-700/60 bg-zinc-900/80 px-2.5 py-1 text-xs font-medium text-zinc-300 shadow-md backdrop-blur-md">
-              {event.category}
-            </span>
+            <>
+              <span className="text-zinc-300">•</span>
+              <span className="text-zinc-400">{event.category}</span>
+            </>
           )}
         </div>
       </div>
 
-      {/* Card Body */}
-      <div className="flex flex-1 flex-col p-5">
-        {/* Date & Location Metas */}
-        <div className="flex flex-wrap items-center gap-y-1.5 gap-x-3 text-xs text-zinc-400">
-          <span className="inline-flex items-center gap-1 text-zinc-300">
-            <Calendar className="size-3.5 text-amber-400/90" />
-            <span>{formattedDate}</span>
-          </span>
-
-          {event.location && (
-            <span className="inline-flex items-center gap-1 text-zinc-400">
-              <MapPin className="size-3.5 text-zinc-500" />
-              <span className="truncate max-w-40">{event.location}</span>
-            </span>
+      {/* Botones de Acción (Share + Link a Entradas) */}
+      <div className="flex items-center gap-2 shrink-0">
+        <button
+          type="button"
+          onClick={handleShare}
+          className="hidden sm:inline-flex size-8 items-center justify-center rounded-full text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700 transition"
+          title="Compartir enlace"
+        >
+          {copied ? (
+            <Check className="size-3.5 text-emerald-600" />
+          ) : (
+            <Share2 className="size-3.5" />
           )}
-        </div>
+        </button>
 
-        {/* Event Title */}
-        <h3 className="mt-2.5 text-lg font-bold tracking-tight text-zinc-100 transition-colors group-hover:text-amber-300/90">
-          {event.title}
-        </h3>
-
-        {/* Short Description */}
-        {event.description && (
-          <p className="mt-1.5 text-xs text-zinc-400 line-clamp-2 leading-relaxed">
-            {event.description}
-          </p>
-        )}
-
-        {/* Spacer to push actions to bottom */}
-        <div className="mt-auto pt-5">
-          <div className="flex items-center gap-2">
-            {/* Primary Action Button */}
-            <button
-              type="button"
-              onClick={() => onEventClick(event)}
-              className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-zinc-100 px-4 py-2.5 text-xs font-bold text-zinc-950 transition hover:bg-zinc-200 active:scale-[0.98] shadow-sm"
-            >
-              <span>Conseguir Entradas</span>
-              <ExternalLink className="size-3.5 text-zinc-950" />
-            </button>
-
-            {/* Share Secondary Button */}
-            <button
-              type="button"
-              onClick={handleShare}
-              title={copied ? '¡Enlace copiado!' : 'Compartir evento'}
-              aria-label="Compartir evento"
-              className="relative inline-flex size-10 shrink-0 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900/90 text-zinc-300 transition hover:border-zinc-700 hover:bg-zinc-800 hover:text-zinc-100 active:scale-95"
-            >
-              {copied ? (
-                <Check className="size-4 text-emerald-400 animate-in zoom-in-75 duration-200" />
-              ) : (
-                <Share2 className="size-4" />
-              )}
-
-              {/* Copied Feedback Bubble */}
-              {copied && (
-                <span className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-zinc-800 px-2 py-0.5 text-[10px] font-semibold text-emerald-300 shadow-lg border border-zinc-700">
-                  ¡Copiado!
-                </span>
-              )}
-            </button>
-          </div>
+        <div className="inline-flex items-center gap-1.5 rounded-full bg-[#29b6f6] hover:bg-[#0288d1] px-4 py-2 text-xs font-semibold text-white shadow-xs transition-colors">
+          <span>Ver fotos</span>
+          <ExternalLink className="size-3" />
         </div>
       </div>
     </article>

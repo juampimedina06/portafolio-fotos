@@ -2,20 +2,12 @@
 
 import { useMemo, useState } from 'react'
 import {
-  Calendar,
   ExternalLink,
-  Flame,
-  MapPin,
   Pencil,
   Plus,
   Search,
   Star,
   Trash2,
-  Image as ImageIcon,
-  CheckCircle2,
-  Ticket,
-  MousePointerClick,
-  Sparkles,
 } from 'lucide-react'
 import type { EventItem } from '@/types/database'
 import { toggleEventFeatured, toggleEventStatus, deleteEvent } from '@/services/events.service'
@@ -110,118 +102,108 @@ export function EventsTable({ events, isLoading, onEventsChange }: EventsTablePr
   }
 
   return (
-    <div className="space-y-6">
-      {/* 1. KPIs Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-5 shadow-lg backdrop-blur-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
-              Total de Eventos
-            </span>
-            <div className="flex size-8 items-center justify-center rounded-lg bg-zinc-800 text-zinc-200">
-              <Ticket className="size-4 text-zinc-400" />
-            </div>
-          </div>
-          <p className="mt-3 text-3xl font-bold tracking-tight text-zinc-100">
+    <div className="space-y-8">
+      {/* 1. KPIs Section - Clean, editorial layout without nested cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pb-6 border-b border-zinc-200/80">
+        <div>
+          <span className="text-[11px] font-medium uppercase tracking-wider text-zinc-400">
+            Total de Eventos
+          </span>
+          <p className="mt-1 text-2xl font-semibold tracking-tight text-zinc-900">
             {totalEvents}
           </p>
-          <span className="text-xs text-zinc-500">Eventos registrados en catálogo</span>
+          <span className="text-xs text-zinc-400 mt-0.5 block">
+            Registrados en catálogo
+          </span>
         </div>
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-5 shadow-lg backdrop-blur-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
-              Eventos Activos
-            </span>
-            <div className="flex size-8 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-              <CheckCircle2 className="size-4" />
-            </div>
-          </div>
-          <p className="mt-3 text-3xl font-bold tracking-tight text-emerald-400">
+        <div>
+          <span className="text-[11px] font-medium uppercase tracking-wider text-zinc-400">
+            Eventos Activos
+          </span>
+          <p className="mt-1 text-2xl font-semibold tracking-tight text-zinc-900">
             {activeEvents}
           </p>
-          <span className="text-xs text-zinc-500">Visibles al público en cartelera</span>
+          <span className="text-xs text-zinc-400 mt-0.5 block">
+            Visibles en cartelera pública
+          </span>
         </div>
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-5 shadow-lg backdrop-blur-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
-              Clics Totales
-            </span>
-            <div className="flex size-8 items-center justify-center rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
-              <MousePointerClick className="size-4" />
-            </div>
-          </div>
-          <p className="mt-3 text-3xl font-bold tracking-tight text-amber-400">
+        <div>
+          <span className="text-[11px] font-medium uppercase tracking-wider text-zinc-400">
+            Visitas a Galerías
+          </span>
+          <p className="mt-1 text-2xl font-semibold tracking-tight text-zinc-900">
             {totalClicks}
           </p>
-          <span className="text-xs text-zinc-500">Interacciones en links de compra</span>
+          <span className="text-xs text-zinc-400 mt-0.5 block">
+            Clics en enlaces a fotos
+          </span>
         </div>
       </div>
 
       {/* 2. Toolbar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3.5 top-3 size-4 text-zinc-500" />
+        <div className="relative flex-1 max-w-sm">
+          <Search className="absolute left-3 top-2.5 size-4 text-zinc-400" />
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Buscar por título, categoría o ubicación..."
-            className="w-full rounded-xl border border-zinc-800 bg-zinc-900/80 py-2.5 pl-10 pr-4 text-sm text-zinc-100 placeholder:text-zinc-500 focus:border-zinc-600 focus:outline-none"
+            placeholder="Buscar por título, categoría o lugar..."
+            className="w-full rounded-xl border border-zinc-200 bg-white py-2 pl-9 pr-4 text-xs text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 transition"
           />
         </div>
 
         <button
           type="button"
           onClick={handleOpenCreate}
-          className="flex items-center justify-center gap-2 rounded-xl bg-zinc-100 px-4 py-2.5 text-xs font-semibold text-zinc-950 transition hover:bg-zinc-200 shadow-md"
+          className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2 text-xs font-medium text-white transition hover:bg-zinc-800 shadow-xs"
         >
-          <Plus className="size-4" />
-          <span>Crear Nuevo Evento</span>
+          <Plus className="size-3.5" />
+          <span>Crear Evento</span>
         </button>
       </div>
 
-      {/* 3. Table / Cards List */}
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 shadow-xl overflow-hidden backdrop-blur-sm">
+      {/* 3. Table / Events List - Clean, serene white table */}
+      <div className="rounded-2xl border border-zinc-200/80 bg-white overflow-hidden shadow-xs">
         {isLoading ? (
-          <div className="divide-y divide-zinc-800/80">
+          <div className="divide-y divide-zinc-100">
             {[1, 2, 3].map((idx) => (
               <div key={idx} className="flex items-center gap-4 p-4 animate-pulse">
-                <div className="size-16 rounded-xl bg-zinc-800" />
+                <div className="size-14 rounded-lg bg-zinc-100" />
                 <div className="flex-1 space-y-2">
-                  <div className="h-4 w-1/3 rounded bg-zinc-800" />
-                  <div className="h-3 w-1/4 rounded bg-zinc-800/60" />
+                  <div className="h-4 w-1/4 rounded bg-zinc-100" />
+                  <div className="h-3 w-1/3 rounded bg-zinc-50" />
                 </div>
               </div>
             ))}
           </div>
         ) : filteredEvents.length === 0 ? (
-          <div className="py-16 text-center text-zinc-500">
-            <Ticket className="mx-auto size-12 opacity-30 mb-3 stroke-1" />
-            <p className="text-base font-medium text-zinc-300">
-              {searchTerm ? 'No se encontraron eventos con esa búsqueda' : 'No hay eventos cargados aún'}
+          <div className="py-20 text-center text-zinc-400">
+            <p className="text-sm font-medium text-zinc-600">
+              {searchTerm ? 'No hay eventos que coincidan con la búsqueda' : 'No hay eventos registrados'}
             </p>
-            <p className="text-xs text-zinc-500 mt-1">
+            <p className="text-xs text-zinc-400 mt-1">
               {searchTerm
-                ? 'Probá buscando con otro término'
-                : 'Hacé clic en "Crear Nuevo Evento" para publicar el primero'}
+                ? 'Probá buscando con otros términos'
+                : 'Creá tu primer evento para publicarlo en la cartelera.'}
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="border-b border-zinc-800 bg-zinc-950/60 text-xs font-semibold uppercase tracking-wider text-zinc-400">
+            <table className="w-full text-left text-xs">
+              <thead className="border-b border-zinc-200/80 bg-zinc-50/60 text-[11px] font-medium uppercase tracking-wider text-zinc-500">
                 <tr>
-                  <th className="py-3.5 pl-6 pr-3">Evento</th>
-                  <th className="px-3 py-3.5">Fecha & Enlace</th>
+                  <th className="py-3.5 pl-6 pr-3">Evento / Cobertura</th>
+                  <th className="px-3 py-3.5">Fecha & Galería</th>
                   <th className="px-3 py-3.5">Métricas</th>
                   <th className="px-3 py-3.5 text-center">Destacado</th>
                   <th className="px-3 py-3.5 text-center">Estado</th>
                   <th className="py-3.5 pl-3 pr-6 text-right">Acciones</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-800/60">
+              <tbody className="divide-y divide-zinc-100">
                 {filteredEvents.map((event) => {
                   const isProcessing = actionInProgressId === event.id
                   const formattedDate = event.event_date
@@ -237,12 +219,12 @@ export function EventsTable({ events, isLoading, onEventsChange }: EventsTablePr
                   return (
                     <tr
                       key={event.id}
-                      className="transition-colors hover:bg-zinc-800/30"
+                      className="transition-colors hover:bg-zinc-50/70"
                     >
                       {/* Flyer & Info */}
                       <td className="py-4 pl-6 pr-3">
                         <div className="flex items-center gap-3">
-                          <div className="relative size-14 shrink-0 overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950">
+                          <div className="relative size-12 shrink-0 overflow-hidden rounded-lg border border-zinc-200 bg-zinc-100">
                             {event.image_url ? (
                               // eslint-disable-next-line @next/next/no-img-element
                               <img
@@ -251,29 +233,30 @@ export function EventsTable({ events, isLoading, onEventsChange }: EventsTablePr
                                 className="size-full object-cover"
                               />
                             ) : (
-                              <div className="flex size-full items-center justify-center text-zinc-600">
-                                <ImageIcon className="size-5" />
+                              <div className="flex size-full items-center justify-center text-[10px] text-zinc-400">
+                                Sin foto
                               </div>
                             )}
                           </div>
                           <div className="min-w-0">
                             <div className="flex items-center gap-2">
-                              <h4 className="font-semibold text-zinc-100 truncate max-w-50 sm:max-w-65">
+                              <h4 className="font-medium text-zinc-900 truncate max-w-50 sm:max-w-65">
                                 {event.title}
                               </h4>
                               {event.is_featured && (
-                                <Sparkles className="size-3.5 text-amber-400 shrink-0" />
+                                <span className="rounded-full bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 text-[9px] font-medium text-amber-700">
+                                  Destacado
+                                </span>
                               )}
                             </div>
-                            <div className="flex items-center gap-2 mt-1 text-xs text-zinc-400">
+                            <div className="flex items-center gap-2 mt-1 text-[11px] text-zinc-500">
                               {event.category && (
-                                <span className="rounded-md border border-zinc-700/60 bg-zinc-800/80 px-2 py-0.5 text-[10px] text-zinc-300">
+                                <span className="rounded bg-zinc-100 px-1.5 py-0.5 text-[10px] text-zinc-600">
                                   {event.category}
                                 </span>
                               )}
                               {event.location && (
-                                <span className="flex items-center gap-1 truncate max-w-[150px]">
-                                  <MapPin className="size-3 text-zinc-500" />
+                                <span className="truncate max-w-[150px]">
                                   {event.location}
                                 </span>
                               )}
@@ -285,17 +268,16 @@ export function EventsTable({ events, isLoading, onEventsChange }: EventsTablePr
                       {/* Date & Link */}
                       <td className="px-3 py-4">
                         <div className="space-y-1">
-                          <span className="flex items-center gap-1.5 text-xs text-zinc-300 font-medium">
-                            <Calendar className="size-3.5 text-zinc-500" />
+                          <span className="block text-zinc-800 font-medium">
                             {formattedDate}
                           </span>
                           <a
                             href={event.external_link}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-200 transition underline-offset-4 hover:underline"
+                            className="inline-flex items-center gap-1 text-zinc-400 hover:text-zinc-900 transition underline-offset-4 hover:underline"
                           >
-                            <span className="truncate max-w-35">Entradas</span>
+                            <span className="truncate max-w-35">Ver fotos</span>
                             <ExternalLink className="size-3" />
                           </a>
                         </div>
@@ -303,9 +285,8 @@ export function EventsTable({ events, isLoading, onEventsChange }: EventsTablePr
 
                       {/* Clicks Badge */}
                       <td className="px-3 py-4">
-                        <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/20 bg-amber-500/10 px-2.5 py-1 text-xs font-semibold text-amber-300">
-                          <Flame className="size-3 text-amber-400" />
-                          <span>{event.clicks_count} clics</span>
+                        <span className="inline-flex items-center rounded-full bg-zinc-100 px-2.5 py-1 text-[11px] font-medium text-zinc-700">
+                          {event.clicks_count} clics
                         </span>
                       </td>
 
@@ -316,15 +297,15 @@ export function EventsTable({ events, isLoading, onEventsChange }: EventsTablePr
                           disabled={isProcessing}
                           onClick={() => handleToggleFeatured(event)}
                           title={event.is_featured ? 'Quitar de destacados' : 'Marcar como destacado'}
-                          className={`rounded-lg p-2 transition ${
+                          className={`rounded-lg p-1.5 transition ${
                             event.is_featured
-                              ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
-                              : 'text-zinc-500 hover:bg-zinc-800 hover:text-zinc-300'
+                              ? 'text-amber-500 hover:text-amber-600'
+                              : 'text-zinc-300 hover:text-zinc-500'
                           }`}
                         >
                           <Star
                             className={`size-4 ${
-                              event.is_featured ? 'fill-amber-300' : ''
+                              event.is_featured ? 'fill-amber-400 text-amber-500' : ''
                             }`}
                           />
                         </button>
@@ -336,13 +317,13 @@ export function EventsTable({ events, isLoading, onEventsChange }: EventsTablePr
                           type="button"
                           disabled={isProcessing}
                           onClick={() => handleToggleActive(event)}
-                          className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                            event.is_active ? 'bg-emerald-500' : 'bg-zinc-700'
+                          className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                            event.is_active ? 'bg-zinc-900' : 'bg-zinc-200'
                           }`}
                         >
                           <span
-                            className={`pointer-events-none inline-block size-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
-                              event.is_active ? 'translate-x-5' : 'translate-x-0'
+                            className={`pointer-events-none inline-block size-4 transform rounded-full bg-white shadow-xs ring-0 transition duration-200 ease-in-out ${
+                              event.is_active ? 'translate-x-4' : 'translate-x-0'
                             }`}
                           />
                         </button>
@@ -350,12 +331,12 @@ export function EventsTable({ events, isLoading, onEventsChange }: EventsTablePr
 
                       {/* Actions */}
                       <td className="py-4 pl-3 pr-6 text-right">
-                        <div className="flex items-center justify-end gap-1.5">
+                        <div className="flex items-center justify-end gap-1">
                           <button
                             type="button"
                             disabled={isProcessing}
                             onClick={() => handleOpenEdit(event)}
-                            className="rounded-lg border border-zinc-800 bg-zinc-950 p-2 text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100 transition"
+                            className="rounded-lg p-1.5 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition"
                             title="Editar evento"
                           >
                             <Pencil className="size-3.5" />
@@ -364,7 +345,7 @@ export function EventsTable({ events, isLoading, onEventsChange }: EventsTablePr
                             type="button"
                             disabled={isProcessing}
                             onClick={() => handleDelete(event)}
-                            className="rounded-lg border border-zinc-800 bg-zinc-950 p-2 text-red-400 hover:bg-red-500/10 hover:border-red-500/30 transition"
+                            className="rounded-lg p-1.5 text-zinc-400 hover:text-red-600 hover:bg-red-50 transition"
                             title="Eliminar evento"
                           >
                             <Trash2 className="size-3.5" />

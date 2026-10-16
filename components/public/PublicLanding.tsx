@@ -1,18 +1,17 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { CalendarX, RotateCcw } from 'lucide-react'
 import { InstagramIcon } from './InstagramIcon'
+import { MessageCircle, ShieldCheck } from 'lucide-react'
 import type { EventItem, SiteSettings } from '@/types/database'
 import { getPublicEvents, registerEventClick } from '@/services/events.service'
 import { getSiteSettings } from '@/services/settings.service'
-import { normalizeExternalUrl, normalizeInstagramUrl } from '@/utils/formatters'
-import { PublicNavbar } from './PublicNavbar'
-import { PublicHero } from './PublicHero'
+import { buildWhatsAppUrl, normalizeExternalUrl, normalizeInstagramUrl } from '@/utils/formatters'
 import { EventCard } from './EventCard'
 import { EventFilters, type TimeFilterOption } from './EventFilters'
 import { EventGridSkeleton } from './EventGridSkeleton'
-import { PublicFooter } from './PublicFooter'
+import { DriftWall } from './DriftWall'
+import Link from 'next/link'
 
 interface PublicLandingProps {
   initialEvents?: EventItem[]
@@ -32,7 +31,7 @@ export function PublicLanding({
   // Filters state
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
-  const [timeFilter, setTimeFilter] = useState<TimeFilterOption>('upcoming')
+  const [timeFilter, setTimeFilter] = useState<TimeFilterOption>('all')
 
   // Fetch data on mount if not provided initially
   useEffect(() => {
@@ -69,7 +68,6 @@ export function PublicLanding({
   const handleEventClick = (event: EventItem) => {
     const targetUrl = normalizeExternalUrl(event.external_link)
 
-    // Asynchronous non-blocking tracking
     registerEventClick(event.id).catch((err) => {
       console.error('Failed to register event click:', err)
     })
@@ -88,11 +86,6 @@ export function PublicLanding({
       }
     })
     return Array.from(set)
-  }, [events])
-
-  // First featured event for Hero spotlight
-  const featuredEvent = useMemo(() => {
-    return events.find((ev) => ev.is_featured) || null
   }, [events])
 
   // Filter events by temporal range, category and text query
@@ -130,126 +123,147 @@ export function PublicLanding({
     })
   }, [events, timeFilter, selectedCategory, searchQuery])
 
-  const handleResetFilters = () => {
-    setSearchQuery('')
-    setSelectedCategory('all')
-    setTimeFilter('upcoming')
-  }
-
   const instagramHref = normalizeInstagramUrl(settings?.instagram_url)
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex flex-col bg-zinc-950 text-zinc-100 selection:bg-amber-500/30 selection:text-amber-200">
-        <PublicNavbar settings={settings} />
-        <main className="flex-1 pb-20">
-          <EventGridSkeleton />
-        </main>
-        <PublicFooter settings={settings} />
-      </div>
-    )
-  }
+  const whatsappHref = buildWhatsAppUrl(settings?.whatsapp_number)
 
   return (
-    <div className="min-h-screen flex flex-col bg-zinc-950 text-zinc-100 selection:bg-amber-500/30 selection:text-amber-200">
-      {/* Sticky Blurred Navbar */}
-      <PublicNavbar settings={settings} />
-
-      <main className="flex-1 pb-24">
-        {/* Dynamic Hero Section */}
-        <PublicHero
-          settings={settings}
-          featuredEvent={featuredEvent}
-          onEventClick={handleEventClick}
+    <div className="relative min-h-screen flex flex-col justify-between text-zinc-900 selection:bg-sky-200">
+      {/* Fondo animado 3D interactivo con DriftWall de React Bits */}
+      <div className="fixed inset-0 overflow-hidden select-none z-0">
+        <DriftWall
+          columns={6}
+          speed={24}
+          tilt={12}
+          turn={-10}
+          roll={-26}
+          variance={0.35}
+          parallax={0}
+          lift={55}
+          dim={0.93}
+          tileWidth={190}
+          tileHeight={250}
+          gap={20}
+          radius={16}
+          mobileColumns={6}
+          mobileTileWidth={110}
+          mobileTileHeight={150}
+          mobileGap={12}
+          mobileRadius={10}
+          className="size-full"
         />
+        {/* Velo sutil con opacidad para suavizar las fotos del fondo y dar perfecta legibilidad */}
+        <div className="absolute inset-0 bg-white/25 backdrop-blur-[0.5px] pointer-events-none" />
+      </div>
 
-        {/* Events Grid Section with Anchor */}
-        <section id="eventos" className="scroll-mt-20 pt-16 sm:pt-20">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-8">
-            {/* Section Header & Filters */}
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-100">
-                  Cartelera de Fechas
-                </h2>
-                <p className="mt-1 text-sm text-zinc-400">
-                  Seleccioná tu evento y conseguí tus entradas antes de que se agoten.
-                </p>
-              </div>
-
-              {/* Filtering Controls */}
-              <EventFilters
-                searchQuery={searchQuery}
-                onSearchChange={setSearchQuery}
-                categories={categories}
-                selectedCategory={selectedCategory}
-                onCategoryChange={setSelectedCategory}
-                timeFilter={timeFilter}
-                onTimeFilterChange={setTimeFilter}
-                totalCount={filteredEvents.length}
-              />
-            </div>
-
-            {/* Event Cards Grid */}
-            {filteredEvents.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                {filteredEvents.map((event) => (
-                  <EventCard
-                    key={event.id}
-                    event={event}
-                    onEventClick={handleEventClick}
-                  />
-                ))}
-              </div>
-            ) : (
-              /* Clean Empty State */
-              <div className="flex flex-col items-center justify-center rounded-2xl border border-zinc-800/80 bg-zinc-900/40 px-6 py-16 text-center backdrop-blur-sm">
-                <div className="flex size-14 items-center justify-center rounded-2xl border border-zinc-800 bg-zinc-900 text-zinc-400 mb-4 shadow-inner">
-                  <CalendarX className="size-7 text-zinc-500" />
-                </div>
-
-                <h3 className="text-lg font-bold text-zinc-100">
-                  No se encontraron eventos
-                </h3>
-
-                <p className="mt-1.5 text-xs text-zinc-400 max-w-md">
-                  {searchQuery || selectedCategory !== 'all' || timeFilter !== 'upcoming'
-                    ? 'No hay resultados que coincidan con los filtros seleccionados. Probá ajustar la búsqueda.'
-                    : 'Actualmente no hay fechas programadas. Seguí las historias en Instagram para no perderte ningún anuncio.'}
-                </p>
-
-                <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-                  {searchQuery || selectedCategory !== 'all' || timeFilter !== 'all' ? (
-                    <button
-                      type="button"
-                      onClick={handleResetFilters}
-                      className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-700 bg-zinc-800 px-4 py-2 text-xs font-semibold text-zinc-200 transition hover:bg-zinc-700 active:scale-95"
-                    >
-                      <RotateCcw className="size-3.5" />
-                      <span>Limpiar filtros</span>
-                    </button>
-                  ) : null}
-
-                  {instagramHref && (
-                    <a
-                      href={instagramHref}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-pink-600 to-amber-600 px-4 py-2 text-xs font-semibold text-white shadow-md transition hover:opacity-90 active:scale-95"
-                    >
-                      <InstagramIcon className="size-3.5" />
-                      <span>Ver novedades en Instagram</span>
-                    </a>
-                  )}
-                </div>
-              </div>
-            )}
+      {/* Contenido Principal Flotante (pointer-events-none para que el espacio libre interactúe con el DriftWall) */}
+      <main className="relative z-10 mx-auto w-full max-w-xl px-4 sm:px-6 py-10 sm:py-14 space-y-6 pointer-events-none">
+        {/* Cabecera / Título sin caja grande: solo un contorno y pill ajustado al título */}
+        <header className="text-center space-y-2.5 pointer-events-auto">
+          <div className="inline-flex items-center justify-center   px-7 py-1.5 ">
+            <h1 className="font-[family-name:var(--font-caveat)] text-6xl sm:text-7xl font-bold text-zinc-950 tracking-wide select-none leading-none ">
+              Fotos Tom
+            </h1>
           </div>
-        </section>
+
+          <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-widest text-zinc-800 [text-shadow:_0_1px_8px_rgba(255,255,255,1),_0_0_2px_white]">
+            {settings?.hero_subtitle || 'Portafolio Fotográfico • Shows • Coberturas'}
+          </p>
+
+          {/* Botones de Redes Sociales en Píldora */}
+          {(instagramHref || whatsappHref) && (
+            <div className="flex items-center justify-center gap-2 pt-1">
+              {instagramHref && (
+                <a
+                  href={instagramHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200/90 bg-white/90 px-3.5 py-1 text-xs font-medium text-zinc-700 shadow-xs hover:border-pink-300 hover:text-pink-600 hover:bg-white transition active:scale-95 backdrop-blur-sm"
+                >
+                  <InstagramIcon className="size-3.5 text-pink-500" />
+                  <span>Instagram</span>
+                </a>
+              )}
+              {whatsappHref && (
+                <a
+                  href={whatsappHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200/90 bg-white/90 px-3.5 py-1 text-xs font-medium text-zinc-700 shadow-xs hover:border-emerald-300 hover:text-emerald-600 hover:bg-white transition active:scale-95 backdrop-blur-sm"
+                >
+                  <MessageCircle className="size-3.5 text-emerald-500" />
+                  <span>WhatsApp</span>
+                </a>
+              )}
+            </div>
+          )}
+        </header>
+
+        {/* Filtros Estéticos */}
+        {!isLoading && events.length > 0 && (
+          <div className="pt-2 pointer-events-auto">
+            <EventFilters
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              categories={categories}
+              selectedCategory={selectedCategory}
+              onCategoryChange={setSelectedCategory}
+              timeFilter={timeFilter}
+              onTimeFilterChange={setTimeFilter}
+              totalCount={filteredEvents.length}
+            />
+          </div>
+        )}
+
+        {/* Lista de Eventos en Tarjetas Píldora */}
+        <div className="space-y-3 pt-2 pointer-events-auto">
+          {isLoading ? (
+            <EventGridSkeleton />
+          ) : filteredEvents.length > 0 ? (
+            filteredEvents.map((event) => (
+              <EventCard
+                key={event.id}
+                event={event}
+                onEventClick={handleEventClick}
+              />
+            ))
+          ) : (
+            <div className="rounded-3xl border border-zinc-200/80 bg-white/90 p-8 text-center backdrop-blur-sm shadow-xs">
+              <p className="text-sm font-medium text-zinc-700">
+                {searchQuery || selectedCategory !== 'all'
+                  ? 'No se encontraron fechas con esos filtros.'
+                  : 'No hay eventos publicados por el momento.'}
+              </p>
+              {(searchQuery || selectedCategory !== 'all') && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchQuery('')
+                    setSelectedCategory('all')
+                    setTimeFilter('all')
+                  }}
+                  className="mt-3 text-xs font-semibold text-sky-600 hover:underline"
+                >
+                  Restablecer filtros
+                </button>
+              )}
+            </div>
+          )}
+        </div>
       </main>
 
-      {/* Modern Footer */}
-      <PublicFooter settings={settings} />
+      {/* Footer con Píldora Flotante para no perderse contra el fondo */}
+      <footer className="relative z-10 py-6 text-center pointer-events-none">
+        <div className="inline-flex items-center gap-2 rounded-full border border-white/90 bg-white/90 px-5 py-1.5 text-xs text-zinc-600 shadow-xs backdrop-blur-md pointer-events-auto">
+          <span>Tomás Fotografía & Eventos</span>
+          <span className="text-zinc-300">•</span>
+          <Link
+            href="/admin"
+            className="text-zinc-500 hover:text-zinc-900 transition underline-offset-4 hover:underline"
+          >
+            Acceso Admin
+          </Link>
+        </div>
+      </footer>
     </div>
   )
 }

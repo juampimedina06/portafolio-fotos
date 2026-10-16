@@ -44,9 +44,9 @@ export function PublicHero({
           <img
             src={bgUrl}
             alt="Hero Background"
-            className="size-full object-cover object-center opacity-35"
+            className="size-full object-cover object-center opacity-85"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/80 via-zinc-950/90 to-zinc-950" />
+          <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/40 via-zinc-950/60 to-zinc-950/90" />
         </div>
       ) : (
         <div className="absolute inset-0 z-0">
