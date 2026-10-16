@@ -3,6 +3,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
+const ADMIN_EMAILS = ['1tomaschavez@gmail.com']
+
 export async function login(formData: { email: string; password: string }) {
   const supabase = await createClient()
 
@@ -15,13 +17,19 @@ export async function login(formData: { email: string; password: string }) {
     }
   }
 
-  const { data: profile, error: profileError } = await supabase
+  const userEmail = data.user.email?.toLowerCase()
+  const isEmailAdmin = userEmail ? ADMIN_EMAILS.includes(userEmail) : false
+
+  // Try checking profiles table, but fallback to admin email whitelist
+  const { data: profile } = await supabase
     .from('profiles')
     .select('role')
     .eq('id', data.user.id)
     .single()
 
-  if (profileError || profile?.role !== 'admin') {
+  const isAdmin = isEmailAdmin || profile?.role === 'admin'
+
+  if (!isAdmin) {
     // If not admin, sign out immediately
     await supabase.auth.signOut()
     return {
@@ -36,7 +44,7 @@ export async function login(formData: { email: string; password: string }) {
     message: 'Sesión iniciada exitosamente',
     data: {
       ...data,
-      role: profile.role,
+      role: 'admin',
     },
   }
 }

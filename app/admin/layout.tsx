@@ -1,9 +1,8 @@
-import { AdminHeader } from '@/components/admin/AdminHeader'
-import { AdminSidebar } from '@/components/admin/AdminSidebar'
+import type { Metadata } from 'next'
 
-export const metadata = {
-  title: 'Dashboard Administrador | Tomás Foto',
-  description: 'Gestión de portafolio y fotografías',
+export const metadata: Metadata = {
+  title: 'Panel de Administración | Tomás Fotografía & Eventos',
+  description: 'Gestión de eventos, publicaciones y personalización del inicio',
 }
 
 export default function AdminLayout({
@@ -12,14 +11,8 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <AdminHeader />
-      <div className="flex flex-1">
-        <AdminSidebar />
-        <main className="flex-1 p-6 md:p-8 overflow-y-auto">
-          {children}
-        </main>
-      </div>
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 antialiased selection:bg-zinc-800 selection:text-zinc-100">
+      {children}
     </div>
   )
 }

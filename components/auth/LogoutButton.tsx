@@ -38,7 +38,7 @@ export function LogoutButton({ className }: { className?: string }) {
       ) : (
         <LogOut className="size-4 mr-1.5" />
       )}
-      Cerrar Sesión
+      <span>Cerrar Sesión</span>
     </Button>
   )
 }

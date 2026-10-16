@@ -92,8 +92,14 @@ export function SignInForm() {
         </CardContent>
         <CardFooter className="flex flex-col gap-3">
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
-            Ingresar
+            {isLoading ? (
+              <>
+                <Loader2 className="size-4 animate-spin" />
+                <span>Ingresando...</span>
+              </>
+            ) : (
+              <span>Ingresar</span>
+            )}
           </Button>
         </CardFooter>
       </form>
