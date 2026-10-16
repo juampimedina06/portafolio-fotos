@@ -163,7 +163,7 @@ export function PublicLanding({
         <header className="text-center space-y-3 pointer-events-auto">
           <div className="inline-flex items-center justify-center px-7 py-1.5">
             <h1 className="font-[family-name:var(--font-caveat)] text-6xl sm:text-7xl font-bold text-zinc-950 tracking-wide select-none leading-none">
-              Fotos Tom
+              {settings?.hero_title || 'Fotos Tom'}
             </h1>
           </div>
 
