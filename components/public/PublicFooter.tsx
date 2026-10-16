@@ -1,8 +1,9 @@
 import Link from 'next/link'
 import { Camera, Lock, MessageCircle } from 'lucide-react'
 import { InstagramIcon } from './InstagramIcon'
+import { GoogleDriveIcon } from './GoogleDriveIcon'
 import type { SiteSettings } from '@/types/database'
-import { buildWhatsAppUrl, normalizeInstagramUrl } from '@/utils/formatters'
+import { buildWhatsAppUrl, normalizeDriveUrl, normalizeInstagramUrl } from '@/utils/formatters'
 
 interface PublicFooterProps {
   settings?: SiteSettings | null
@@ -11,6 +12,7 @@ interface PublicFooterProps {
 export function PublicFooter({ settings }: PublicFooterProps) {
   const instagramHref = normalizeInstagramUrl(settings?.instagram_url)
   const whatsappHref = buildWhatsAppUrl(settings?.whatsapp_number)
+  const driveHref = normalizeDriveUrl(settings?.drive_url)
 
   return (
     <footer className="w-full border-t border-zinc-900 bg-zinc-950 py-12 text-zinc-500">
@@ -28,6 +30,18 @@ export function PublicFooter({ settings }: PublicFooterProps) {
 
           {/* Social Links & Admin Access */}
           <div className="flex items-center gap-4 text-xs">
+            {driveHref && (
+              <a
+                href={driveHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 text-zinc-400 transition hover:text-sky-400"
+              >
+                <GoogleDriveIcon className="size-3.5" />
+                <span>Drive</span>
+              </a>
+            )}
+
             {instagramHref && (
               <a
                 href={instagramHref}

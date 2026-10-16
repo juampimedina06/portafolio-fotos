@@ -14,6 +14,7 @@ export function SiteSettingsForm() {
   const [ctaText, setCtaText] = useState('')
   const [instagramUrl, setInstagramUrl] = useState('')
   const [whatsappNumber, setWhatsappNumber] = useState('')
+  const [driveUrl, setDriveUrl] = useState('')
 
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
@@ -30,6 +31,7 @@ export function SiteSettingsForm() {
         setCtaText(data.cta_text || '')
         setInstagramUrl(data.instagram_url || '')
         setWhatsappNumber(data.whatsapp_number || '')
+        setDriveUrl(data.drive_url || '')
       } catch (err) {
         toast.error('Error al cargar configuración: ' + (err instanceof Error ? err.message : ''))
       } finally {
@@ -57,6 +59,7 @@ export function SiteSettingsForm() {
         cta_text: ctaText.trim() || null,
         instagram_url: instagramUrl.trim() || null,
         whatsapp_number: whatsappNumber.trim() || null,
+        drive_url: driveUrl.trim() || null,
       }
 
       const updated = await updateSiteSettings(payload)
@@ -188,7 +191,7 @@ export function SiteSettingsForm() {
               Canales de Contacto Directo
             </h3>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-zinc-700">
                   URL perfil de Instagram
@@ -211,6 +214,19 @@ export function SiteSettingsForm() {
                   value={whatsappNumber}
                   onChange={(e) => setWhatsappNumber(e.target.value)}
                   placeholder="+5491112345678"
+                  className="w-full rounded-xl border border-zinc-200 bg-zinc-50/50 px-3.5 py-2 text-xs text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 transition"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-zinc-700">
+                  URL de Google Drive (Carpeta general)
+                </label>
+                <input
+                  type="url"
+                  value={driveUrl}
+                  onChange={(e) => setDriveUrl(e.target.value)}
+                  placeholder="https://drive.google.com/drive/folders/..."
                   className="w-full rounded-xl border border-zinc-200 bg-zinc-50/50 px-3.5 py-2 text-xs text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 transition"
                 />
               </div>

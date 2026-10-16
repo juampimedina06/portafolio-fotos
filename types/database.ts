@@ -24,6 +24,7 @@ export interface SiteSettings {
   cta_text: string | null
   instagram_url: string | null
   whatsapp_number: string | null
+  drive_url?: string | null
   updated_at: string
 }
 

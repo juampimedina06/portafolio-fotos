@@ -29,6 +29,17 @@ export function normalizeInstagramUrl(handleOrUrl: string | null | undefined): s
 }
 
 /**
+ * Normalizes a Google Drive URL to guarantee an absolute protocol.
+ */
+export function normalizeDriveUrl(rawUrl: string | null | undefined): string | null {
+  if (!rawUrl) return null
+  const trimmed = rawUrl.trim()
+  if (!trimmed) return null
+  return normalizeExternalUrl(trimmed)
+}
+
+
+/**
  * Builds a direct wa.me URL from a phone number string.
  */
 export function buildWhatsAppUrl(phoneNumber: string | null | undefined): string | null {

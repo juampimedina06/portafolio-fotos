@@ -2,11 +2,12 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { InstagramIcon } from './InstagramIcon'
+import { GoogleDriveIcon } from './GoogleDriveIcon'
 import { MessageCircle, ShieldCheck } from 'lucide-react'
 import type { EventItem, SiteSettings } from '@/types/database'
 import { getPublicEvents, registerEventClick } from '@/services/events.service'
 import { getSiteSettings } from '@/services/settings.service'
-import { buildWhatsAppUrl, normalizeExternalUrl, normalizeInstagramUrl } from '@/utils/formatters'
+import { buildWhatsAppUrl, normalizeDriveUrl, normalizeExternalUrl, normalizeInstagramUrl } from '@/utils/formatters'
 import { EventCard } from './EventCard'
 import { EventFilters, type TimeFilterOption } from './EventFilters'
 import { EventGridSkeleton } from './EventGridSkeleton'
@@ -125,6 +126,7 @@ export function PublicLanding({
 
   const instagramHref = normalizeInstagramUrl(settings?.instagram_url)
   const whatsappHref = buildWhatsAppUrl(settings?.whatsapp_number)
+  const driveHref = normalizeDriveUrl(settings?.drive_url || process.env.NEXT_PUBLIC_DRIVE_URL) || 'https://drive.google.com'
 
   return (
     <div className="relative min-h-screen flex flex-col justify-between text-zinc-900 selection:bg-sky-200">
@@ -158,9 +160,9 @@ export function PublicLanding({
       {/* Contenido Principal Flotante (pointer-events-none para que el espacio libre interactúe con el DriftWall) */}
       <main className="relative z-10 mx-auto w-full max-w-xl px-4 sm:px-6 py-10 sm:py-14 space-y-6 pointer-events-none">
         {/* Cabecera / Título sin caja grande: solo un contorno y pill ajustado al título */}
-        <header className="text-center space-y-2.5 pointer-events-auto">
-          <div className="inline-flex items-center justify-center   px-7 py-1.5 ">
-            <h1 className="font-[family-name:var(--font-caveat)] text-6xl sm:text-7xl font-bold text-zinc-950 tracking-wide select-none leading-none ">
+        <header className="text-center space-y-3 pointer-events-auto">
+          <div className="inline-flex items-center justify-center px-7 py-1.5">
+            <h1 className="font-[family-name:var(--font-caveat)] text-6xl sm:text-7xl font-bold text-zinc-950 tracking-wide select-none leading-none">
               Fotos Tom
             </h1>
           </div>
@@ -169,28 +171,47 @@ export function PublicLanding({
             {settings?.hero_subtitle || 'Portafolio Fotográfico • Shows • Coberturas'}
           </p>
 
-          {/* Botones de Redes Sociales en Píldora */}
-          {(instagramHref || whatsappHref) && (
-            <div className="flex items-center justify-center gap-2 pt-1">
+          {/* Botones de Redes Sociales & Drive estilo React Bits / Shiny Glass (Color por defecto, neutros en hover) */}
+          {(driveHref || instagramHref || whatsappHref) && (
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 pt-1">
+              {driveHref && (
+                <a
+                  href={driveHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Carpeta general en Google Drive"
+                  className="group relative inline-flex items-center gap-2 rounded-full border border-sky-300/90 bg-sky-50/60 px-4 py-1.5 text-xs font-semibold text-sky-700 shadow-xs shadow-sky-100/80 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-zinc-200 hover:bg-white/95 hover:text-zinc-700 hover:shadow-xs active:scale-95 overflow-hidden"
+                >
+                  <span className="absolute inset-0 -translate-x-full group-hover:animate-shimmer bg-gradient-to-r from-transparent via-white/60 to-transparent pointer-events-none" />
+                  <GoogleDriveIcon className="size-3.5 transition-transform duration-300 group-hover:scale-105" />
+                  <span>Drive</span>
+                </a>
+              )}
+
               {instagramHref && (
                 <a
                   href={instagramHref}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200/90 bg-white/90 px-3.5 py-1 text-xs font-medium text-zinc-700 shadow-xs hover:border-pink-300 hover:text-pink-600 hover:bg-white transition active:scale-95 backdrop-blur-sm"
+                  aria-label="Perfil de Instagram"
+                  className="group relative inline-flex items-center gap-2 rounded-full border border-pink-300/90 bg-pink-50/60 px-4 py-1.5 text-xs font-semibold text-pink-700 shadow-xs shadow-pink-100/80 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-zinc-200 hover:bg-white/95 hover:text-zinc-700 hover:shadow-xs active:scale-95 overflow-hidden"
                 >
-                  <InstagramIcon className="size-3.5 text-pink-500" />
+                  <span className="absolute inset-0 -translate-x-full group-hover:animate-shimmer bg-gradient-to-r from-transparent via-white/60 to-transparent pointer-events-none" />
+                  <InstagramIcon className="size-3.5 text-pink-500 transition-colors duration-300 group-hover:text-zinc-500" />
                   <span>Instagram</span>
                 </a>
               )}
+
               {whatsappHref && (
                 <a
                   href={whatsappHref}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200/90 bg-white/90 px-3.5 py-1 text-xs font-medium text-zinc-700 shadow-xs hover:border-emerald-300 hover:text-emerald-600 hover:bg-white transition active:scale-95 backdrop-blur-sm"
+                  aria-label="Contactar por WhatsApp"
+                  className="group relative inline-flex items-center gap-2 rounded-full border border-emerald-300/90 bg-emerald-50/60 px-4 py-1.5 text-xs font-semibold text-emerald-700 shadow-xs shadow-emerald-100/80 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-zinc-200 hover:bg-white/95 hover:text-zinc-700 hover:shadow-xs active:scale-95 overflow-hidden"
                 >
-                  <MessageCircle className="size-3.5 text-emerald-500" />
+                  <span className="absolute inset-0 -translate-x-full group-hover:animate-shimmer bg-gradient-to-r from-transparent via-white/60 to-transparent pointer-events-none" />
+                  <MessageCircle className="size-3.5 text-emerald-500 transition-colors duration-300 group-hover:text-zinc-500" />
                   <span>WhatsApp</span>
                 </a>
               )}

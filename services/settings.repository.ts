@@ -45,6 +45,20 @@ export async function updateSiteSettingsRow(
     .single()
 
   if (error) {
+    // Graceful recovery if drive_url column doesn't exist yet in Supabase
+    if (error.message?.includes('drive_url') && 'drive_url' in data) {
+      const { drive_url, ...fallbackData } = data
+      const { data: retryData, error: retryError } = await supabase
+        .from('site_settings')
+        .update(fallbackData)
+        .eq('id', 1)
+        .select()
+        .single()
+
+      if (!retryError) {
+        return { ...(retryData as SiteSettings), drive_url }
+      }
+    }
     throw new Error(error.message)
   }
 

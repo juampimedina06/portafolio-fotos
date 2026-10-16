@@ -110,9 +110,10 @@ export function EventCard({ event, onEventClick }: EventCardProps) {
           )}
         </button>
 
-        <div className="inline-flex items-center gap-1.5 rounded-full bg-[#29b6f6] hover:bg-[#0288d1] px-4 py-2 text-xs font-semibold text-white shadow-xs transition-colors">
+        <div className="relative overflow-hidden inline-flex items-center gap-1.5 rounded-full bg-[#29b6f6] hover:bg-[#0288d1] px-4 py-2 text-xs font-semibold text-white shadow-xs transition-all duration-200 group-hover:shadow-md group-hover:shadow-sky-300/40 active:scale-95">
+          <span className="absolute inset-0 -translate-x-full group-hover:animate-shimmer bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none" />
           <span>Ver fotos</span>
-          <ExternalLink className="size-3" />
+          <ExternalLink className="size-3 transition-transform duration-200 group-hover:translate-x-0.5" />
         </div>
       </div>
     </article>

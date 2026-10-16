@@ -1,8 +1,9 @@
 import Link from 'next/link'
 import { Camera, MessageCircle } from 'lucide-react'
 import { InstagramIcon } from './InstagramIcon'
+import { GoogleDriveIcon } from './GoogleDriveIcon'
 import type { SiteSettings } from '@/types/database'
-import { buildWhatsAppUrl, normalizeInstagramUrl } from '@/utils/formatters'
+import { buildWhatsAppUrl, normalizeDriveUrl, normalizeInstagramUrl } from '@/utils/formatters'
 
 interface PublicNavbarProps {
   settings: SiteSettings | null
@@ -11,6 +12,7 @@ interface PublicNavbarProps {
 export function PublicNavbar({ settings }: PublicNavbarProps) {
   const instagramHref = normalizeInstagramUrl(settings?.instagram_url ?? null)
   const whatsappHref = buildWhatsAppUrl(settings?.whatsapp_number ?? null)
+  const driveHref = normalizeDriveUrl(settings?.drive_url ?? null)
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md transition-all">
@@ -33,8 +35,20 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
           </div>
         </Link>
 
-        {/* Quick Actions (Instagram & WhatsApp) */}
+        {/* Quick Actions (Drive, Instagram & WhatsApp) */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {driveHref && (
+            <a
+              href={driveHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Carpeta en Google Drive"
+              className="inline-flex size-9 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900/80 text-zinc-300 transition hover:border-sky-500/50 hover:bg-zinc-800 hover:text-sky-400 active:scale-95"
+            >
+              <GoogleDriveIcon className="size-4" />
+            </a>
+          )}
+
           {instagramHref && (
             <a
               href={instagramHref}
