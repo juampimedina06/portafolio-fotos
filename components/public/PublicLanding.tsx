@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { InstagramIcon } from './InstagramIcon'
 import { GoogleDriveIcon } from './GoogleDriveIcon'
-import { MessageCircle, ShieldCheck } from 'lucide-react'
+import { MessageCircle, ShieldCheck, ExternalLink } from 'lucide-react'
+import Image from 'next/image'
 import type { EventItem, SiteSettings } from '@/types/database'
 import { getPublicEvents, registerEventClick } from '@/services/events.service'
 import { getSiteSettings } from '@/services/settings.service'
@@ -272,9 +273,9 @@ export function PublicLanding({
         </div>
       </main>
 
-      {/* Footer con Píldora Flotante para no perderse contra el fondo */}
-      <footer className="relative z-10 py-6 text-center pointer-events-none">
-        <div className="inline-flex items-center gap-2 rounded-full border border-white/90 bg-white/90 px-5 py-1.5 text-xs text-zinc-600 shadow-xs backdrop-blur-md pointer-events-auto">
+      {/* Footer con Píldoras Flotantes */}
+      <footer className="relative z-10 py-6 pb-8 flex flex-col sm:flex-row items-center justify-center gap-2.5 text-center pointer-events-none">
+        <div className="inline-flex items-center gap-2 rounded-full border border-white/90 bg-white/90 px-4 py-1.5 text-xs text-zinc-600 shadow-xs backdrop-blur-md pointer-events-auto">
           <span>Tomás Fotografía & Eventos</span>
           <span className="text-zinc-300">•</span>
           <Link
@@ -284,6 +285,28 @@ export function PublicLanding({
             Acceso Admin
           </Link>
         </div>
+
+        {/* Sello de Autoría & Conversión Codiarg */}
+        <a
+          href="https://codiarg.vercel.app/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group inline-flex items-center gap-1.5 rounded-full border border-white/90 bg-white/90 px-3.5 py-1.5 text-xs text-zinc-600 shadow-xs backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-zinc-300 hover:bg-white hover:text-zinc-900 hover:shadow-sm pointer-events-auto"
+          title="¿Necesitás una web para tu negocio o marca? Codiarg - Desarrollo Web"
+        >
+          <span className="text-zinc-400 group-hover:text-zinc-500 transition-colors">Web por</span>
+          <div className="relative size-4 overflow-hidden rounded-full border border-zinc-200/80 shadow-2xs">
+            <Image
+              src="/img/codiarg-logo.jpg"
+              alt="Codiarg"
+              width={16}
+              height={16}
+              className="size-full object-cover"
+            />
+          </div>
+          <span className="font-semibold text-zinc-800 group-hover:text-zinc-950 transition-colors">Codiarg</span>
+          <ExternalLink className="size-3 text-zinc-400 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-zinc-600" />
+        </a>
       </footer>
     </div>
   )
